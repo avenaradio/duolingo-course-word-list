@@ -1,0 +1,74 @@
+Sub Makro1()
+'
+' Makro1 Makro
+'
+
+'
+    Dim leccionList(5000, 3) As String
+    Dim allWords(10000) As String
+    Dim awi As Integer 'allWords index
+    k = 1
+    Do While i < 5000
+        If InStr(1, Range("A1").Offset(i, 0).Value, "Lección") > 0 Then '********** Suchwort
+            If Right(Range("A1").Offset(i, 0).Value, 1) = 1 Then
+                leccionList(j, 0) = "Sección " + CStr(k) '***********************Section in der Sprache
+                k = k + 1
+            End If
+            leccionList(j, 1) = Right(Range("A1").Offset(i, 0).Value, 1)
+            'Wordlist work
+            wordList = Range("A1").Offset(i + 1, 0).Value
+            'count commas + 1
+            a = Len(wordList)
+            noCommaWordList = Replace(wordList, ",", "", 1, -1, vbTextCompare)
+            b = Len(noCommaWordList)
+            commas = (a - b) + 1
+            'check if word not existing in allWords()
+            Do While m < commas
+                actualWord = Split(noCommaWordList)(m)
+                Do While awj <= awi
+                    If actualWord = allWords(awj) Then
+                        GoTo NextWord
+                    End If
+                    awj = awj + 1
+                Loop
+                'word is a new word
+                allWords(awi) = actualWord
+                awi = awi + 1
+                If newWordList = "" Then
+                    newWordList = actualWord
+                Else
+                    newWordList = newWordList & ", " & actualWord
+                End If
+NextWord:
+                awj = 0
+                m = m + 1
+            Loop
+            m = 0
+            If Not newWordList = "" Then
+                leccionList(j, 2) = newWordList
+                newWordList = ""
+                j = j + 1
+            End If
+        End If
+    i = i + 1
+    Loop
+    
+    'print allWords
+    Sheets.Add.Name = "Words"
+    Sheets("Words").Select
+    Do While awk <= awi
+        Range("A1").Offset(awk, 0).Value = allWords(awk)
+    awk = awk + 1
+    Loop
+    
+    'print leccionList
+    Sheets.Add.Name = "Sections"
+    Sheets("Sections").Select
+    Do While p <= j
+        Range("A1").Offset(p, 0).Value = leccionList(p, 0)
+        Range("A1").Offset(p, 1).Value = leccionList(p, 1)
+        Range("A1").Offset(p, 2).Value = leccionList(p, 2)
+    p = p + 1
+    Loop
+    
+End Sub
